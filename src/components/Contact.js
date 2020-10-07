@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 
+import { Consumer } from "../Context";
+
 class Contact extends Component {
   /*
   Generating event in react the function has no access of the state to have the access there are threee ways 
@@ -16,37 +18,45 @@ class Contact extends Component {
   state = {
     showContactInfo: true,
   };
-  onDeleteClick = () => {
-    this.props.deleteClickHandler();
+  onDeleteClick = (id,dispatch) => {
+    dispatch({type:'DELETE_CONTACT' , payload:id})
   };
   render() {
-    const { name, email, phone } = this.props.contact;
+    const { id, name, email, phone } = this.props.contact;
     return (
-      <div className="card card-body mt-3">
-        <h3>
-          {name}
-          <i
-            className="fa fa-caret-down"
-            style={{ cursor: "pointer" }}
-            onClick={() => {
-              this.setState((state) => ({
-                showContactInfo: !state.showContactInfo,
-              }));
-            }}
-          ></i>
-          <i
-            className="fa fa-trash-o"
-            style={DeleteStyling}
-            onClick={this.onDeleteClick}
-          ></i>
-        </h3>
-        {this.state.showContactInfo ? (
-          <ul className="list-group">
-            <li className="list-group-item">{email}</li>
-            <li className="list-group-item">{phone}</li>
-          </ul>
-        ) : null}
-      </div>
+      //To use the global state everything should be inside Consumer class
+      <Consumer>
+        {(value) => {
+          const { dispatch } = value;
+          return (
+            <div className="card card-body mt-3">
+              <h3>
+                {name}
+                <i
+                  className="fa fa-caret-down"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    this.setState((state) => ({
+                      showContactInfo: !state.showContactInfo,
+                    }));
+                  }}
+                ></i>
+                <i
+                  className="fa fa-trash-o"
+                  style={DeleteStyling}
+                  onClick={this.onDeleteClick.bind(this,id,dispatch)}
+                ></i>
+              </h3>
+              {this.state.showContactInfo ? (
+                <ul className="list-group">
+                  <li className="list-group-item">{email}</li>
+                  <li className="list-group-item">{phone}</li>
+                </ul>
+              ) : null}
+            </div>
+          );
+        }}
+      </Consumer>
     );
   }
 }
@@ -58,6 +68,5 @@ const DeleteStyling = {
 };
 Contact.propTypes = {
   contact: PropTypes.object.isRequired,
-  deleteClickHandler:PropTypes.func.isRequired
 };
 export default Contact;
