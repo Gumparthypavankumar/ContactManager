@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Consumer } from "../../Context";
+import TextInputGroup from "../layouts/TextInputGroup";
 import { v4 as uuidv4 } from 'uuid';
 
 class AddContact extends Component {
@@ -7,11 +8,31 @@ class AddContact extends Component {
     name: "",
     email: "",
     phone: "",
+    errors:{}
   };
   onSubmit = (dispatch,e) => {
     e.preventDefault();
     const { name,email,phone} = this.state;
 
+    //Checking Errors in input field
+    if(name === ''){
+      this.setState({errors : {
+        name:'Name is Required'
+      }});
+      return;
+    }
+    if(email === ''){
+      this.setState({errors : {
+        email:'Email is Required'
+      }});
+      return;
+    }
+    if(phone === ''){
+      this.setState({errors : {
+        phone:'Phone is Required'
+      }});
+      return;
+    }
     //Creating a new Contact
     const newContact ={
         id:uuidv4(),
@@ -22,10 +43,12 @@ class AddContact extends Component {
 
     dispatch({type:'ADD_CONTACT',payload:newContact});
 
+    //Clear State
     this.setState({
         name:'',
         email:'',
-        phone:''
+        phone:'',
+        errors:{}
     });
 
   };
@@ -34,7 +57,7 @@ class AddContact extends Component {
     //Passing the function as a parameter in setState gives you an event is nullified error to get rid of it you should use e.persist() in tht beginning of function
   };
   render() {
-    const { name, email, phone } = this.state;
+    const { name, email, phone, errors} = this.state;
     return (
       <Consumer>
         {(value) => {
@@ -46,43 +69,31 @@ class AddContact extends Component {
               </div>
               <div className="card-body">
                 <form onSubmit={this.onSubmit.bind(this,dispatch)}>
-                  <div className="form-group">
-                    <label htmlFor="name">Name</label>
-                    <input
-                      type="text"
-                      name="name"
-                      id="name"
-                      className="form-control"
-                      placeholder="Enter Name Please..."
-                      value={name}
-                      onChange={this.onChange}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="email">Email</label>
-                    <input
-                      type="email"
-                      name="email"
-                      id="email"
-                      className="form-control"
-                      placeholder="Enter Email Please..."
-                      value={email}
-                      onChange={this.onChange}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="phone">Phone</label>
-                    <input
-                      type="text"
-                      name="phone"
-                      id="phone"
-                      className="form-control"
-                      placeholder="Enter Phone Please..."
-                      value={phone}
-                      onChange={this.onChange}
-                      autoComplete="off"
-                    />
-                  </div>
+                  <TextInputGroup 
+                    label="Name"
+                    name="name"
+                    placeholder="Enter Name Please..."
+                    value={name}
+                    onChange={this.onChange}
+                    error ={errors.name}
+                  />
+                  <TextInputGroup 
+                    label="Email"
+                    type="email"
+                    name="email"
+                    placeholder="Enter Email Please..."
+                    value={email}
+                    onChange={this.onChange}
+                    error ={errors.email}
+                  />
+                  <TextInputGroup 
+                    label="Phone"
+                    name="phone"
+                    placeholder="Enter Phone Please..."
+                    value={phone}
+                    onChange={this.onChange}
+                    error = {errors.phone}
+                  />
                   <input
                     type="submit"
                     value="Add Contact"
