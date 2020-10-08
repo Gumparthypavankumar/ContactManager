@@ -2,21 +2,30 @@ import React, { Component } from 'react';
 
 class AddContact extends Component
 {
-    state={
-        name:'',
-        email:'',
-        phone:''
-    };
+    constructor(props){
+        super(props);
+        //Creating the references 
+        this.nameInput = React.createRef();
+        this.emailInput = React.createRef();
+        this.phoneInput = React.createRef();
+    }
+    static defaultProps={
+        name:'Fred Smith',
+        email:'fredsmith@email.com',
+        phone:'777-777-77777'
+    }
     onSubmit = (e) =>{
         e.preventDefault();
-        console.log(this.state);
-    }
-    onChange = (e) => {
-        this.setState({[e.target.name]:e.target.value})
-        //Passing the function as a parameter in setState gives you an event is nullified error to get rid of it you should use e.persist() in tht beginning of function
+        const contact = {
+            //Getting the value entered in the input fields
+            name:this.nameInput.current.value,
+            email:this.emailInput.current.value,
+            phone:this.phoneInput.current.value
+        }
+        console.log(contact);
     }
     render(){
-        const { name,email,phone } = this.state;
+        const { name,email,phone } = this.props;
         return (
             <div className="card my-2">
                 <div className="card-header">
@@ -30,8 +39,9 @@ class AddContact extends Component
                             id="name"
                             className="form-control"
                             placeholder="Enter Name Please..."
-                            value={name}
-                            onChange={this.onChange}
+                            defaultValue={name}
+                            //Creating the name input field as a reference so that we can not control form inputs with state
+                            ref={this.nameInput}
                             />
                         </div>
                         <div className="form-group">
@@ -40,17 +50,20 @@ class AddContact extends Component
                             id="email"
                             className="form-control"
                             placeholder="Enter Email Please..."
-                            value={email}
-                            onChange={this.onChange}/>
+                            defaultValue={email}
+                            //Creating the email input field as a reference so that we can not control form inputs with state
+                            ref={this.emailInput}
+                            />
                         </div>
                         <div className="form-group">
                             <label htmlFor="phone">Phone</label>
                             <input type="text" name="phone"
                             id="phone" className="form-control"
                             placeholder="Enter Phone Please..."
-                            value={phone}
-                            onChange={this.onChange}
+                            defaultValue={phone}
                             autoComplete="off"
+                            //Creating the phone input field as a reference so that we can not control form inputs with state
+                            ref={this.phoneInput}
                             />
                         </div>
                         <input type="submit" value="Add Contact" className="btn btn-primary btn-block"/>
