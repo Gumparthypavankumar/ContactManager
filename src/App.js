@@ -1,6 +1,7 @@
 import React from "react";
-import Header from "./components/Header";
-import Contacts from "./components/Contacts";
+import Header from "./components/layouts/Header";
+import Contacts from "./components/Contacts/Contacts";
+import AddContact from "./components/Contacts/AddContact";
 
 import { Provider } from "./Context";
 
@@ -14,6 +15,7 @@ function App() {
       <div className="App">
         <Header branding="ContactManager" />
         <div className="container">
+          <AddContact/>
           <Contacts />
         </div>
       </div>
