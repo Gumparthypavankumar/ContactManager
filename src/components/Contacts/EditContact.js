@@ -4,17 +4,33 @@ import { Consumer } from "../../Context";
 import TextInputGroup from "../layouts/TextInputGroup";
 // import { v4 as uuidv4 } from 'uuid';
 
-class AddContact extends Component {
+class EditContact extends Component {
   state = {
     name: "",
     email: "",
     phone: "",
     errors:{}
   };
+  componentDidMount(){
+      const { id } = this.props.match.params;
+      axios.get(`https://jsonplaceholder.typicode.com/users/${id}`)
+      .then(res => this.setState({
+        name:res.data.name,
+        email:res.data.email,
+        phone:res.data.phone
+    }))
+    .catch(err => console.log(err));
+  }
+
+    //To get Rid of the warning Can't perform a React state update on an unmounted component.
+    //   componentWillUnmount() {
+        //This._isMounted to be set true in componentwillmount and should be declared as false
+    //     this._isMounted = false;
+    //   }
+
   onSubmit = (dispatch,e) => {
     e.preventDefault();
     const { name,email,phone} = this.state;
-
     //Checking Errors in input field
     if(name === ''){
       this.setState({errors : {
@@ -41,9 +57,11 @@ class AddContact extends Component {
         phone
     }
 
-    axios.post('https://jsonplaceholder.typicode.com/users',newContact)
-    .then(res => dispatch({type:'ADD_CONTACT',payload:res.data}))
-    .catch(err => console.log(err))
+    const { id } = this.props.match.params;
+
+    axios.put(`https://jsonplaceholder.typicode.com/users/${id}`,newContact)
+    .then(res => dispatch({type:'EDIT_CONTACT',payload:res.data}))
+    .catch(err => console.log(err));
 
     //Clear State
     this.setState({
@@ -61,15 +79,15 @@ class AddContact extends Component {
     //Passing the function as a parameter in setState gives you an event is nullified error to get rid of it you should use e.persist() in tht beginning of function
   };
   render() {
-    const { name, email, phone, errors} = this.state;
     return (
       <Consumer>
         {(value) => {
+        const { name, email, phone, errors} = this.state;
           const { dispatch } = value;
           return (
             <div className="card my-2">
               <div className="card-header">
-                <h1>Add Component</h1>
+                <h1>Edit Component</h1>
               </div>
               <div className="card-body">
                 <form onSubmit={this.onSubmit.bind(this,dispatch)}>
@@ -100,7 +118,7 @@ class AddContact extends Component {
                   />
                   <input
                     type="submit"
-                    value="Add Contact"
+                    value="Update Contact"
                     className="btn btn-primary btn-block"
                   />
                 </form>
@@ -113,4 +131,4 @@ class AddContact extends Component {
   }
 }
 
-export default AddContact;
+export default EditContact;
