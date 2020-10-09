@@ -51,6 +51,8 @@ class AddContact extends Component {
         errors:{}
     });
 
+    //Redirecting
+    this.props.history.push('/');
   };
   onChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
